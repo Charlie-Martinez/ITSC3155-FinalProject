@@ -28,4 +28,3 @@ def update(payment_id: int, request: schema.PaymentUpdate, db: Session = Depends
 @router.delete("/{payment_id}")
 def delete(payment_id: int, db: Session = Depends(get_db)):
     return controller.delete(db=db, payment_id=payment_id)
-# Extra thing you should add

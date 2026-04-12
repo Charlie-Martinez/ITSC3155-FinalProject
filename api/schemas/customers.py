@@ -7,6 +7,9 @@ class CustomerBase(BaseModel):
     address: str
     email: str
 
+class CustomerCreate(CustomerBase):
+    pass
+
 class CustomerUpdate(BaseModel):
     name: Optional[str] = None
     phone: Optional[str] = None

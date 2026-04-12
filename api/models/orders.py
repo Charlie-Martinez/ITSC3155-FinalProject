@@ -9,7 +9,7 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     customer_name = Column(String(100))
-    order_date = Column(DATETIME, nullable=False, server_default=str(func.now()))
+    order_date = Column(DATETIME, nullable=False, server_default=func.now())
     description = Column(String(300))
     tracking_number = Column(String(50), unique=True, nullable=False, index=True)
     order_status = Column(String(20), default="Pending")
