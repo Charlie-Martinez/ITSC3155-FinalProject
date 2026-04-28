@@ -46,6 +46,16 @@ def read_one(db: Session, order_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return order
 
+def read_by_tracking(db: Session, tracking_number: str):
+    try:
+        order = db.query(model.Order).filter(model.Order.tracking_number == tracking_number).first()
+        if not order:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return order
+
 
 def update(db: Session, order_id, request):
     try:
