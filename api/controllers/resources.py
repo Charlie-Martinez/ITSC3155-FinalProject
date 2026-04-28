@@ -12,6 +12,10 @@ def create(db: Session, request):
 def read_all(db: Session):
     return db.query(model.Resource).all()
 
+def read_low_resources(db: Session, max_amount: int = 5):
+    items = db.query(model.Resource).filter(model.Resource.amount <= max_amount).all()
+    return items
+
 def read_one(db: Session, resource_id: int):
     item = db.query(model.Resource).filter(model.Resource.id == resource_id).first()
     if not item:
