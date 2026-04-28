@@ -4,6 +4,7 @@ from sqlalchemy.util import ordered_column_set
 
 from ..models import orders as model
 from sqlalchemy.exc import SQLAlchemyError
+from ..models import promotions as promotion_model
 
 
 def create(db: Session, request):
@@ -56,6 +57,35 @@ def read_by_tracking(db: Session, tracking_number: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return order
 
+def apply_promo(db: Session, order_id: int, promo_code: str):
+    try:
+        order = db.query(model.Order).filter(model.Order.id == order_id).first()
+
+        if not order:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found!")
+
+        promo = db.query(promotion_model.Promotion).filter(
+            promotion_model.Promotion.promo_code == promo_code
+        ).first()
+
+        if not promo:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Promo not found!")
+
+        if not promo.is_active:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Promo is not active!")
+
+        discount = float(promo.discount_value) / 100
+        order.total_price = float(order.total_price) - (float(order.total_price) * discount)
+        order.promotion_id = promo.id
+
+        db.commit()
+        db.refresh(order)
+
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+
+    return order
 
 def update(db: Session, order_id, request):
     try:
