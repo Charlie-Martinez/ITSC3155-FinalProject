@@ -20,6 +20,16 @@ def read_all(db: Session = Depends(get_db)):
     return controller.read_all(db)
 
 
+@router.post("/{order_id}/apply-promo", response_model=schema.Order)
+def apply_promo(order_id: int, promo_code: str, db: Session = Depends(get_db)):
+    return controller.apply_promo(db=db, order_id=order_id, promo_code=promo_code)
+
+
+@router.get("/track/{tracking_number}", response_model=schema.Order)
+def read_by_tracking(tracking_number: str, db: Session = Depends(get_db)):
+    return controller.read_by_tracking(db=db, tracking_number=tracking_number)
+
+
 @router.get("/{order_id}", response_model=schema.Order)
 def read_one(order_id: int, db: Session = Depends(get_db)):
     return controller.read_one(db, order_id=order_id)
@@ -33,7 +43,3 @@ def update(order_id: int, request: schema.OrderUpdate, db: Session = Depends(get
 @router.delete("/{order_id}")
 def delete(order_id: int, db: Session = Depends(get_db)):
     return controller.delete(db=db, order_id=order_id)
-
-@router.get("/track/{tracking_number", response_model=schema.Order)
-def read_by_tracking(tracking_number: str, db: Session = Depends(get_db)):
-    return controller.read_by_tracking(db=db, tracking_number=tracking_number)
