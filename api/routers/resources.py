@@ -17,6 +17,10 @@ def create(request: schema.ResourceCreate, db: Session = Depends(get_db)):
 def read_all(db: Session = Depends(get_db)):
     return controller.read_all(db)
 
+@router.get("/low", response_model=list[schema.Resource])
+def read_low_resources(max_amount: int = 5, db: Session = Depends(get_db)):
+    return controller.read_low_resources(db=db, max_amount=max_amount)
+
 @router.get("/{resource_id}", response_model=schema.Resource)
 def read_one(resource_id: int, db: Session = Depends(get_db)):
     return controller.read_one(db, resource_id)
