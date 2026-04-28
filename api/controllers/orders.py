@@ -5,7 +5,7 @@ from sqlalchemy.util import ordered_column_set
 from ..models import orders as model
 from sqlalchemy.exc import SQLAlchemyError
 from ..models import promotions as promotion_model
-
+from datetime import datetime
 
 def create(db: Session, request):
     new_order = model.Order(
@@ -28,14 +28,27 @@ def create(db: Session, request):
     return new_order
 
 
-def read_all(db: Session):
+def read_all(db: Session, start_date=None, end_date=None):
     try:
-        result = db.query(model.Order).all()
+        query = db.query(model.Order)
+
+        if start_date:
+            start_date = datetime.fromisoformat(start_date)
+            query = query.filter(model.Order.order_date >= start_date)
+
+        if end_date:
+            end_date = datetime.fromisoformat(end_date)
+            query = query.filter(model.Order.order_date <= end_date)
+
+        result = query.all()
+
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return result
 
+    return result
 
 def read_one(db: Session, order_id):
     try:
