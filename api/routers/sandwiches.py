@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from ..controllers import sandwiches as controller
 from ..schemas import sandwiches as schema
 from ..dependencies.database import get_db
+from typing import Optional
 
 router = APIRouter(
     tags=['Sandwiches'],
@@ -15,8 +16,8 @@ def create(request: schema.SandwichCreate, db: Session = Depends(get_db)):
     return controller.create(db=db, request=request)
 
 @router.get("/", response_model=list[schema.Sandwich])
-def read_all(db: Session = Depends(get_db)):
-    return controller.read_all(db=db)
+def read_all(category: Optional[str] = None, db: Session = Depends(get_db)):
+    return controller.read_all(db=db, category=category)
 
 @router.get("/{sandwich_id}", response_model=schema.Sandwich)
 def read_one(sandwich_id: int, db: Session = Depends(get_db)):
