@@ -16,8 +16,8 @@ def create(request: schema.OrderCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=list[schema.Order])
-def read_all(db: Session = Depends(get_db)):
-    return controller.read_all(db)
+def read_all(start_date: str = None, end_date: str = None, db: Session = Depends(get_db)):
+    return controller.read_all(db=db, start_date=start_date, end_date=end_date)
 
 
 @router.post("/{order_id}/apply-promo", response_model=schema.Order)
