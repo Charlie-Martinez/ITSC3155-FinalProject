@@ -37,6 +37,14 @@ def read_one(db: Session, rating_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return rating
 
+def read_low_ratings(db: Session, max_rating: int = 2):
+    try:
+        result = db.query(model.Rating).filter(model.Rating.rating <= max_rating).all()
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return result
+
 def update(db: Session, rating_id, request):
     try:
         rating = db.query(model.Rating).filter(model.Rating.id == rating_id)
