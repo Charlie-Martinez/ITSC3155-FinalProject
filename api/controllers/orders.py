@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from sqlalchemy.util import ordered_column_set
-
+from sqlalchemy import func
 from ..models import orders as model
 from sqlalchemy.exc import SQLAlchemyError
 from ..models import promotions as promotion_model
@@ -125,3 +125,15 @@ def delete(db: Session, order_id):
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+def daily_revenue(db: Session, date: str):
+    try:
+        revenue = db.query(func.sum(model.Order.total_price)).filter(
+            func.date(model.Order.order_date) == date
+        ).scalar()
+        if revenue is None:
+            return {"date": date, "total_revenue": 0.0}
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return {"date": date, "total_revenue": float(revenue)}

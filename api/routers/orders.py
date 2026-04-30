@@ -43,3 +43,7 @@ def update(order_id: int, request: schema.OrderUpdate, db: Session = Depends(get
 @router.delete("/{order_id}")
 def delete(order_id: int, db: Session = Depends(get_db)):
     return controller.delete(db=db, order_id=order_id)
+
+@router.get("/revenue")
+def daily_revenue(date: str, db: Session = Depends(get_db)):
+    return controller.daily_revenue(db=db, date=date)
