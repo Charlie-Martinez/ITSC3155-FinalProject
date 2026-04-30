@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from ..controllers import orders as controller
 from ..main import app
@@ -13,19 +14,26 @@ def db_session(mocker):
     return mocker.Mock()
 
 
-def test_create_order(db_session):
-    # Create a sample order
+def test_track_order(db_session):
+    """Test that a tracking number returns the full order"""
+
     order_data = {
+        "id": 1,
+        "customer_id": 1,
         "customer_name": "John Doe",
-        "description": "Test order"
+        "description": "Double cheeseburger with no onions",
+        "tracking_number": "TRK123ABC",
+        "order_status": "Pending",
+        "delivery_type": "delivery",
+        "total_price": 6.99,
+        "promotion_id": None,
+        "order_date": "2020-04-01"
     }
+    mock_order = model.Order(**order_data)
+    db_session.query.return_value.filter.return_value.first.return_value = mock_order
 
-    order_object = model.Order(**order_data)
-
-    # Call the create function
-    created_order = controller.create(db_session, order_object)
-
-    # Assertions
-    assert created_order is not None
-    assert created_order.customer_name == "John Doe"
-    assert created_order.description == "Test order"
+    result = controller.read_by_tracking(db_session, "TRK123ABC")
+    assert result is not None
+    assert result.tracking_number == "TRK123ABC"
+    assert result.customer_name == "John Doe"
+    assert result.total_price == 6.99
