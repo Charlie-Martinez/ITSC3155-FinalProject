@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status, Response, Depends
-from sqlalchemy.util import ordered_column_set
+from fastapi import HTTPException, status, Response
 from sqlalchemy import func
 from ..models import orders as model
 from sqlalchemy.exc import SQLAlchemyError

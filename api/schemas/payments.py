@@ -1,4 +1,3 @@
-
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
@@ -10,6 +9,7 @@ class PaymentBase(BaseModel):
     card_holder: str
     expiration_date: str
     payment_type: str
+    amount: float
 
 
 class PaymentCreate(PaymentBase):
