@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response
 from ..models import sandwiches as model
 from sqlalchemy.exc import SQLAlchemyError
+from typing import Optional
 
 
 def create(db: Session, request):
@@ -22,9 +23,12 @@ def create(db: Session, request):
     return new_item
 
 
-def read_all(db: Session):
+def read_all(db: Session, category: Optional[str] = None):
     try:
-        result = db.query(model.Sandwich).all()
+        if category:
+            result = db.query(model.Sandwich).filter(model.Sandwich.category == category).all()
+        else:
+            result = db.query(model.Sandwich).all()
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)

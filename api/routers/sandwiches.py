@@ -16,7 +16,7 @@ def create(request: schema.SandwichCreate, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=list[schema.Sandwich])
 def read_all(category: Optional[str] = None, db: Session = Depends(get_db)):
-    return controller.read_all(db, category=category)
+    return controller.read_all(db=db, category=category)
 
 @router.get("/{sandwich_id}", response_model=schema.Sandwich)
 def read_one(sandwich_id: int, db: Session = Depends(get_db)):

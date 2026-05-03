@@ -7,7 +7,8 @@ class CustomerBase(BaseModel):
     address: str
     email: str
 
-CustomerCreate = CustomerBase
+class CustomerCreate(CustomerBase):
+    pass
 
 class CustomerUpdate(BaseModel):
     name: Optional[str] = None
@@ -17,6 +18,5 @@ class CustomerUpdate(BaseModel):
 
 class Customer(CustomerBase):
     id: int
-
     class ConfigDict:
         from_attributes = True

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DATETIME
+from sqlalchemy import Column, Integer, String, ForeignKey, DATETIME, func, DECIMAL
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from ..dependencies.database import Base
@@ -14,6 +14,7 @@ class Payment(Base):
     expiration_date = Column(String(10), nullable=False)
     transaction_status = Column(String(30), nullable=False, default="Pending")
     payment_type = Column(String(30), nullable=False)
-    transaction_date = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
+    amount = Column(DECIMAL(10,2), nullable=False)
+    transaction_date = Column(DATETIME, nullable=False, server_default=func.now())
 
     order = relationship("Order", back_populates="payment")

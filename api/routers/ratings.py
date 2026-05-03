@@ -17,6 +17,10 @@ def create(request: schema.RatingCreate, db: Session = Depends(get_db)):
 def read_all(db: Session = Depends(get_db)):
     return controller.read_all(db)
 
+@router.get("/low", response_model=list[schema.Rating])
+def read_low_ratings(max_rating: int = 2, db: Session = Depends(get_db)):
+    return controller.read_low_ratings(db=db, max_rating=max_rating)
+
 @router.get("/{rating_id}", response_model=schema.Rating)
 def read_one(rating_id: int, db: Session = Depends(get_db)):
     return controller.read_one(db, rating_id=rating_id)
